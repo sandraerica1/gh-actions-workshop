@@ -29,6 +29,32 @@ jobs:
       - name: Build
         run: npm run build
 
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests
+        run: npm run test # This uses "test": "vitest run" from your package.json
+
+  lint:
+    name: Check Linting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Linter
+        run: npm run lint:check # This uses "lint:check": "eslint . --ext .ts,.tsx"
+
 
 
   hello_world_job:
