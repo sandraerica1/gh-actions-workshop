@@ -46,21 +46,21 @@ jobs:
           # This step has an output called 'page_url
 
     # 2. Create a new job called lighthouse
-  lighthouse:
-    runs-on: ubuntu-latest
-    # 3. Add a needs key to the job that makes it depend on the deploy job
-    needs: deploy # This job will only run after 'deploy' job completes successfully
-    steps:
-      # 4. Add a step that runs the Lighthouse CI Action with the URL to the deployed site as input
-      - name: Run Lighthouse CI
-        uses: treosh/lighthouse-ci-action@v11 # Or the latest version of lighthouse-ci-action
-        with:
-          # Get the page_url output from the 'deploy' job
-          urls: |
-            ${{ needs.deploy.outputs.page_url }}
-          # You can add other Lighthouse CI options here if needed, e.g.:
-          # budgetPath: './budget.json' # path to your lighthouse budget file
-          # uploadArtifacts: true # save results as an action artifact
-          # temporaryPublicStorage: true # useful for easy viewing of reports
+    lighthouse:
+      runs-on: ubuntu-latest
+      # 3. Add a needs key to the job that makes it depend on the deploy job
+      needs: deploy # This job will only run after 'deploy' job completes successfully
+      steps:
+        # 4. Add a step that runs the Lighthouse CI Action with the URL to the deployed site as input
+        - name: Run Lighthouse CI
+          uses: treosh/lighthouse-ci-action@v11 # Or the latest version of lighthouse-ci-action
+          with:
+            # Get the page_url output from the 'deploy' job
+            urls: |
+              ${{ needs.deploy.outputs.page_url }}
+            # You can add other Lighthouse CI options here if needed, e.g.:
+            # budgetPath: './budget.json' # path to your lighthouse budget file
+            # uploadArtifacts: true # save results as an action artifact
+            # temporaryPublicStorage: true # useful for easy viewing of reports
 
     
