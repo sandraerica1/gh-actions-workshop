@@ -1,66 +1,43 @@
 name: Deploy
-on:
-   push:
+'on':
+  push:
     branches:
       - main
 jobs:
-
   deploy:
     name: deploy
     runs-on: ubuntu-latest
-
     permissions:
-        contents: read
-        pages: write
-        id-token: write
-
-    # 1. Output the page_url from the deploy job
+      contents: read
+      pages: write
+      id-token: write
     outputs:
-      page_url: ${{ steps.deployment.outputs.page_url }} # Get output from the 'deployment' step
-
-      environment: # This was good practice, keeping it
+      page_url: '${{ steps.deployment.outputs.page_url }}'
+      environment:
         name: github-pages
-        url: ${{ steps.deployment.outputs.page_url }}
-
+        url: '${{ steps.deployment.outputs.page_url }}'
       steps:
-        - name: Checkout repository # Renamed for consistency, was "Checkout code"
+        - name: Checkout repository
           uses: actions/checkout@v4
-
-        - name: Install dependencies # Added this step as it's usually needed before build
+        - name: Install dependencies
           run: npm ci
-
-        - name: Build application # Renamed for consistency, was "Build"
+        - name: Build application
           run: npm run build
-
         - name: Setup Pages
           uses: actions/configure-pages@v5
-
         - name: Upload artifact
           uses: actions/upload-pages-artifact@v3
           with:
-            path: "./dist"
-
+            path: ./dist
         - name: Deploy to GitHub Pages
-          id: deployment # This ID is crucial for accessing its outputs
+          id: deployment
           uses: actions/deploy-pages@v4
-          # This step has an output called 'page_url
-
-    # 2. Create a new job called lighthouse
     lighthouse:
       runs-on: ubuntu-latest
-      # 3. Add a needs key to the job that makes it depend on the deploy job
-      needs: deploy # This job will only run after 'deploy' job completes successfully
+      needs: deploy
       steps:
-        # 4. Add a step that runs the Lighthouse CI Action with the URL to the deployed site as input
         - name: Run Lighthouse CI
-          uses: treosh/lighthouse-ci-action@v11 # Or the latest version of lighthouse-ci-action
+          uses: treosh/lighthouse-ci-action@v11
           with:
-            # Get the page_url output from the 'deploy' job
             urls: |
               ${{ needs.deploy.outputs.page_url }}
-            # You can add other Lighthouse CI options here if needed, e.g.:
-            # budgetPath: './budget.json' # path to your lighthouse budget file
-            # uploadArtifacts: true # save results as an action artifact
-            # temporaryPublicStorage: true # useful for easy viewing of reports
-
-    
